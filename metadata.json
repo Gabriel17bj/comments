@@ -1,5 +1,5 @@
 {
-  "name": "생기부 세특 분석 및 작성기",
+  "name": "바칼로레아 학생 활동 분석 및 피드백 시스템",
   "description": "업로드된 학생 활동 자료와 에세이를 분석하여 2026학년도 기재 요령에 부합하는 학생 개인별 세부능력 및 특기사항(세특)을 생성하고, 평가 루브릭 기반 진단과 상세 피드백을 제공합니다.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]

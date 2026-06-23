@@ -175,8 +175,34 @@ export default function App() {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "서버 분석에 실패했습니다.");
+        let errorMsg = "서버 분석에 실패했습니다.";
+        const contentType = response.headers.get("content-type");
+        if (contentType && contentType.includes("application/json")) {
+          try {
+            const errorData = await response.json();
+            errorMsg = errorData.error || errorMsg;
+          } catch {
+            errorMsg = `서버 에러 (${response.status}) 수신 중 파싱에 실패했습니다.`;
+          }
+        } else {
+          try {
+            const textError = await response.text();
+            errorMsg = `서버 에러 (${response.status}): ${textError.substring(0, 150)}`;
+          } catch {
+            errorMsg = `서버가 에러 코드(${response.status})를 반환했습니다.`;
+          }
+        }
+        throw new Error(errorMsg);
+      }
+
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        try {
+          const rawText = await response.text();
+          throw new Error(`올바르지 않은 응답 형식입니다 (JSON 필요). 받은 데이터: ${rawText.substring(0, 120)}`);
+        } catch {
+          throw new Error("서버로부터 유효하지 않은 응답 형식을 받았습니다.");
+        }
       }
 
       const freshStudent = await response.json();
@@ -470,7 +496,7 @@ export default function App() {
                         <Award className="w-4 h-4" />
                         <span>바칼로레아 논제 탐구 개요</span>
                       </div>
-                      <h3 className="text-lg font-bold text-slate-900">{selectedStudent.studentName} 학생 자료</h3>
+                      <h3 className="text-lg font-bold text-slate-900">{studentNameFormat(selectedStudent.studentName)} 학생 자료</h3>
                       
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2 bg-slate-50 p-3.5 rounded-xl border border-slate-100">
                         <div>
@@ -692,7 +718,7 @@ export default function App() {
               <div className="flex justify-between items-center gap-3 border-t border-slate-100 pt-4 mt-1">
                 <button
                   onClick={() => {
-                    alert(`수정 완료! ${selectedStudent.studentName} 학생의 세특안이 시스템에 성공적으로 보관되었습니다.\n대시보드 또는 리포트 전송을 통해 나이스(NEIS)로 복사하기에 최적화되었습니다.`);
+                    alert(`수정 완료! ${studentNameFormat(selectedStudent.studentName)} 학생의 세특안이 시스템에 성공적으로 보관되었습니다.\n대시보드 또는 리포트 전송을 통해 나이스(NEIS)로 복사하기에 최적화되었습니다.`);
                   }}
                   className="px-4 py-2 bg-gradient-to-r from-teal-700 to-slate-900 hover:from-teal-800 hover:to-slate-950 text-white rounded-xl text-xs font-bold shadow-md hover:shadow-lg transition-all flex items-center gap-1.5"
                 >
@@ -703,7 +729,7 @@ export default function App() {
                 <button
                   onClick={() => {
                     const textFile = new Blob([
-                      `학생명: ${selectedStudent.studentName}\n`,
+                      `학생명: ${studentNameFormat(selectedStudent.studentName)}\n`,
                       `대주제: ${selectedStudent.selectedTopic}\n`,
                       `논제명: ${selectedStudent.customThesis}\n`,
                       `최종 바이트: ${selectedStudent.byteCount} bytes\n`,
@@ -712,7 +738,7 @@ export default function App() {
                     ], { type: 'text/plain;charset=utf-8' });
                     const element = document.createElement("a");
                     element.href = URL.createObjectURL(textFile);
-                    element.download = `${selectedStudent.studentName}_세택최종안.txt`;
+                    element.download = `${studentNameFormat(selectedStudent.studentName)}_세택최종안.txt`;
                     document.body.appendChild(element);
                     element.click();
                     document.body.removeChild(element);

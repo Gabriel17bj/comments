@@ -4,11 +4,6 @@ import multer from "multer";
 import dotenv from "dotenv";
 import { GoogleGenAI, Type } from "@google/genai";
 
-import { createRequire } from "module";
-
-const require = createRequire(import.meta.url);
-const pdf = require("pdf-parse");
-
 dotenv.config();
 
 // Gemini 클라이언트 초기화 (사용자 에이전트 설정 포함)
@@ -33,7 +28,7 @@ async function startServer() {
   // multer 설정 (메모리 스토리지)
   const upload = multer({
     storage: multer.memoryStorage(),
-    limits: { fileSize: 20 * 1024 * 1024 }, // 최대 20MB
+    limits: { fileSize: 21 * 1024 * 1024 }, // 최대 21MB
   });
 
   // API가 준비동작 중인지 유효성 검사하는 헬스체크 라우트
@@ -44,6 +39,10 @@ async function startServer() {
   // PDF 파일 업로드 및 Gemini 기반 세특/루브릭 분석 라우트
   app.post("/api/analyze", upload.single("file"), async (req, res) => {
     try {
+      if (!apiKey) {
+        return res.status(500).json({ error: "GEMINI_API_KEY가 서버 환경설정에 존재하지 않습니다." });
+      }
+
       if (!req.file) {
         return res.status(400).json({ error: "업로드된 파일이 없습니다." });
       }
@@ -51,30 +50,25 @@ async function startServer() {
       const fileBuffer = req.file.buffer;
       const fileName = req.file.originalname;
 
-      // PDF 텍스트 추출
-      let parsedData;
-      try {
-        parsedData = await pdf(fileBuffer);
-      } catch (parseError) {
-        console.error("PDF 파싱 에러:", parseError);
-        return res.status(422).json({ error: "PDF 파일에서 텍스트를 추출할 수 없습니다. 파일이 암호화되어 있거나 올바르지 않은 형식일 수 있습니다." });
-      }
-
-      const textContent = parsedData.text;
-
-      if (!textContent || textContent.trim().length === 0) {
-        return res.status(422).json({ error: "PDF 파일에 한글/영어 텍스트 내용이 존재하지 않습니다." });
-      }
+      // PDF 바이너리를 Base64 문자열로 변환하여 Gemini의 기본 PDF 이해 기술로 직접 전달!
+      // pdf-parse와 같이 Node 네이티브 복잡한 바이너리 해독 없이, 최첨단 Gemini 모델이 PDF의 원본 한글/영문 텍스트를 실시간으로 직접 읽어냅니다.
+      const pdfPart = {
+        inlineData: {
+          mimeType: "application/pdf",
+          data: fileBuffer.toString("base64")
+        }
+      };
 
       // Gemini API 호출을 위한 프롬프트 작성
       const systemInstruction = `
+Your task is to analyze high school student's Baccalaureate essays or activity drafts and draft an evaluation feedback report.
 당신은 고등학교 생기부(학교생활기록부) 작성 보조 및 교육과정 성취 평가 전문가입니다.
 첨부된 원문 자료(학생이 주도적으로 수행한 바칼로레아 주제 탐구 에세이 등)를 철저히 분석하여, 해당 학생만을 위한 '개인별 교과 세부능력 및 특기사항(세특)' 초안을 작성하고, 평가 루브릭 기반 진단과 교육적인 개별 피드백을 제공해 주세요.
 
 [작성 및 분석 지침]
-1. 원문에서 추출할 메타 정보:
-   - 학생 이름: 본문에서 추정할 수 있으면 이름을 추출하고, 없으면 '홍길동'으로 지정하십시오.
-   - 선택 사회 현안: 다음 7개 대주제 중 에세이가 다룬 현안을 선택하십시오.
+1. 원문에서 추출할 메타 정보 지정 및 개인정보 보호 조치 (가명/마스킹 필수):
+   - 학생 이름: 본문에서 추정되거나 기재되어 있는 이름을 반드시 추출하고, 학생 개인정보 보호를 위해 즉시 가명화 또는 마스킹(예: '김동현' -> '김*현', '이서윤' -> '이*윤') 조치하십시오. 생성해서 반환하는 모든 필드(예: studentName, seteuk 및 extractedTextSample 전체)에서도 실명이 절대 그대로 노출되지 않도록 가명 혹은 마스킹 처리를 엄격히 준수하십시오.
+   - 선택 사회 현안: 다음 7개 대주제 중 에세이가 가장 긴밀하게 다룬 현안을 한 가지만 선택하십시오.
      ①사회 불평등과 기회 격차, ②인권, 다양성, 사회 통합, ③민주주의와 시민 참여, ④경제, 노동 구조 변화, ⑤환경, 기후, 자원 문제, ⑥과학기술과 사회 문제, ⑦보건, 사회 안전 문제
    - 학생 개별 논제: 학생이 스스로 설정하여 에세이에서 해결하려 한 실질적 논제 또는 주제입니다.
 
@@ -98,20 +92,24 @@ async function startServer() {
 `;
 
       const userMessage = `
-다음은 분석할 학생 탐구 활동 원문 텍스트입니다:
-------------------------------------------
-파일명: \${fileName}
-본문내용:
-\${textContent}
-------------------------------------------
-위 내용을 기재 요령 및 루브릭 기준에 맞춰 분석한 후, 반드시 다음 구조의 JSON 형태로만 답변을 생성해 주세요.
+첨부된 고등학교 바칼로레아 기안서 혹은 탐구 에세이 PDF 문서를 분석해 주십시오.
+파일명: ${fileName}
+
+위 첨부물의 핵심 내용을 정밀 분석하여 학업 역량과 주도성에 대한 세특용 서술 및 학술적 평가 피드백서를 아래의 JSON 구조로 생성해야 합니다.
+반드시 학생의 모든 텍스트에 대해 비식별화(예: '김동현' -> '김*현') 완료 상태의 이름과 샘플 원문을 보내주어야 합니다.
 `;
 
       // structured JSON Response API 호출
       const response = await ai.models.generateContent({
-        model: "gemini-3.5-flash",
+        model: "gemini-2.5-flash",
         contents: [
-          { role: "user", parts: [{ text: userMessage }] }
+          {
+            role: "user",
+            parts: [
+              pdfPart,
+              { text: userMessage }
+            ]
+          }
         ],
         config: {
           systemInstruction,
@@ -119,10 +117,11 @@ async function startServer() {
           responseSchema: {
             type: Type.OBJECT,
             properties: {
-              studentName: { type: Type.STRING, description: "학생의 이름" },
+              studentName: { type: Type.STRING, description: "학생의 이름으로, 반드시 성 외 부분을 마스킹 처리하여 반환 (예: 김*현, 이*윤)" },
               selectedTopic: { type: Type.STRING, description: "7개의 대주제 중 해당하는 한 가지" },
               customThesis: { type: Type.STRING, description: "학생이 다룬 구체적인 개별 논제" },
-              seteuk: { type: Type.STRING, description: "명사형 종결 어미를 지키고 1500~2100 바이트 분량(공백 포함 은 한글 약 500~680자 내외)으로 교사가 학생을 관찰하여 서술한 개인별 세특 텍스트" },
+              extractedTextSample: { type: Type.STRING, description: "PDF 에세이 본문 내의 핵심 서론/연구의도 부분을 일부 발췌하고 비식별화(이름 마스킹 필수)하여 600자 내외로 복원한 원문 설명글" },
+              seteuk: { type: Type.STRING, description: "명사형 종결 어미를 지키고 1500~2100 바이트 분량(공백 포함 한글 약 500자 ~ 680자 내외)으로 교사가 학생을 관찰하여 서술한 개인별 세특 텍스트" },
               rubrics: {
                 type: Type.OBJECT,
                 properties: {
@@ -164,14 +163,14 @@ async function startServer() {
               feedbacks: {
                 type: Type.OBJECT,
                 properties: {
-                  compliment: { type: Type.STRING, description: "논제의 독창성과 참신함에 대한 칭찬 실마리" },
-                  growth: { type: Type.STRING, description: "개인적 수준의 해결책을 거시적 정책/제도로 시선을 넓히게 돕는 성장 권유 질문" },
+                  compliment: { type: Type.STRING, description: "논제의 독창성과 참신함에 대한 칭찬" },
+                  growth: { type: Type.STRING, description: "개인적 수준의 해결책을 거시적 정책/제도로 시선을 넓히게 돕는 성장 권유 명확한 질문" },
                   formatReview: { type: Type.STRING, description: "독서 및 강의 내용이 복사 붙여넣기 수준인지 자신만의 언어로 분석해서 수용한 정도에 대한 점검 의견" }
                 },
                 required: ["compliment", "growth", "formatReview"]
               }
             },
-            required: ["studentName", "selectedTopic", "customThesis", "seteuk", "rubrics", "feedbacks"]
+            required: ["studentName", "selectedTopic", "customThesis", "extractedTextSample", "seteuk", "rubrics", "feedbacks"]
           }
         }
       });
@@ -199,11 +198,23 @@ async function startServer() {
 
       const finalBytesCount = computeBytes(aiData.seteuk || "");
 
+      // 마스킹 보정 헬퍼 (AI가 누락했을 경우 대비 안전 보조장치)
+      const applyMasking = (name: string): string => {
+        if (!name) return "김*현";
+        const trimmed = name.trim();
+        if (trimmed.length <= 1) return trimmed;
+        if (trimmed.length === 2) return trimmed.charAt(0) + "*";
+        return trimmed.charAt(0) + "*".repeat(trimmed.length - 2) + trimmed.charAt(trimmed.length - 1);
+      };
+
+      const originalName = aiData.studentName || "김동현";
+      const maskedName = originalName.includes("*") ? originalName : applyMasking(originalName);
+
       const result = {
         id: Math.random().toString(36).substring(2, 11),
         fileName,
-        parsedText: textContent.substring(0, 1000) + (textContent.length > 1000 ? "... [이후 원문 생략]" : ""),
-        studentName: aiData.studentName || "홍길동",
+        parsedText: aiData.extractedTextSample || "원본 자료 분석이 완수되었습니다. (개인정보보호 마스킹 처리완료)",
+        studentName: maskedName,
         selectedTopic: aiData.selectedTopic || "① 사회 불평등과 기회 격차",
         customThesis: aiData.customThesis || "지정된 논제가 없음",
         originalSeteuk: aiData.seteuk || "",
@@ -236,9 +247,18 @@ async function startServer() {
     });
   }
 
+  // 글로벌 예외 핸들러 (서버 내부 에러 시 HTML 대신 안전한 JSON 에러 응답 강제)
+  app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+    console.error("글로벌 서버 예외 발생:", err);
+    res.status(500).json({
+      error: "서버 내부 처리 중 예기치 못한 에러가 발생했습니다.",
+      details: err instanceof Error ? err.message : String(err)
+    });
+  });
+
   // 서버 기동
   app.listen(PORT, "0.0.0.0", () => {
-    console.log(`[Server] 생기부 세특 분석 및 작성기 서버가 포트 \${PORT}에서 실행 중입니다.`);
+    console.log(`[Server] 생기부 세특 분석 및 작성기 서버가 포트 ${PORT}에서 실행 중입니다.`);
   });
 }
 
