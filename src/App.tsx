@@ -298,7 +298,7 @@ export default function App() {
               <span className="text-[10px] bg-teal-500/20 text-teal-300 px-2 py-0.5 rounded-full border border-teal-500/30 font-medium">고등학교 학생부 종합형</span>
               <span className="text-[10px] bg-teal-400 text-teal-950 px-2 py-0.5 rounded-full font-bold">2026 개정 적용</span>
             </div>
-            <h1 className="text-xl font-bold tracking-tight font-sans mt-1">생기부 바칼로레아 세특 분석 및 윤문 시스템</h1>
+            <h1 className="text-xl font-bold tracking-tight font-sans mt-1">바칼로레아 학생 활동 분석 및 피드백 시스템</h1>
           </div>
         </div>
         
@@ -661,17 +661,22 @@ export default function App() {
                 <div className="flex justify-between items-center text-xs text-slate-500 font-bold px-1">
                   <label htmlFor="seteuk-textarea" className="flex items-center gap-1.5 cursor-pointer">
                     <Edit3 className="w-3.5 h-3.5 text-teal-600" />
-                    <span>생활기록부 직필 세특 본문</span>
+                    <span>학생 활동 관찰 사항</span>
                   </label>
                   <button 
                     onClick={() => {
+                      if (!selectedStudent.originalSeteuk) {
+                        alert("되돌릴 수 있는 원본 초안 데이터가 존재하지 않습니다.");
+                        return;
+                      }
                       if (confirm("처음 AI가 생성했던 초안으로 세특 문구를 되돌리시겠습니까? 교사의 이전 수정 사항은 손실됩니다.")) {
                         handleSeteukChange(selectedStudent.id, selectedStudent.originalSeteuk);
                       }
                     }}
-                    className="text-[10px] text-teal-600 hover:text-teal-700 font-semibold"
+                    className="flex items-center gap-1 text-[10px] text-teal-600 hover:text-teal-750 font-bold bg-teal-50 hover:bg-teal-100 px-2.5 py-1 rounded-md transition-colors"
                   >
-                    AI 원본으로 되돌리기
+                    <RefreshCw className="w-3 h-3 text-teal-600 animate-spin-hover" />
+                    <span>AI 원본으로 되돌리기</span>
                   </button>
                 </div>
                 <textarea
