@@ -20,12 +20,11 @@ export interface AnalyzedStudent {
   id: string;
   fileName: string;
   studentName: string;
-  selectedTopic: string; // 7개 대주제 중 하나
-  customThesis: string;  // 학생 개별 논제
   parsedText: string;    // PDF 원문 파싱 내용
   originalSeteuk: string; // 최초 생성된 세특
   seteuk: string;         // 교사가 수정할 수 있는 현재 세특
   rubrics: Rubrics;
   feedbacks: Feedbacks;
   byteCount: number;
+  summary: string;       // 학생의 자료 요약
 }

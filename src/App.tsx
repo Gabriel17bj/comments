@@ -18,7 +18,8 @@ import {
   Award,
   TrendingUp,
   ShieldCheck,
-  AlertCircle
+  AlertCircle,
+  X
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { AnalyzedStudent, Rubrics, Feedbacks } from "./types";
@@ -30,13 +31,12 @@ const DEMO_STUDENTS: AnalyzedStudent[] = [
     id: "demo-1",
     fileName: "기후변화와_글로벌_기후불평등_에세이.pdf",
     studentName: "김동현",
-    selectedTopic: "⑤ 환경, 기후, 자원 문제",
-    customThesis: "글로벌 기후 불평등 현상 분석과 개발도상국 기판을 위한 국제 기후 기금의 다각적 개선안 모델링",
-    parsedText: "기후 변화가 미치는 물리적 영향은 위도와 지리적 특성에 따라 상이하게 나타나며 특히 저소득 국가와 적도 권역 개발도상국에 막심한 농업 및 경제적 타격을 준다. 본 연구에서는 선진 국가의 주도적인 과거 탄소 누적 배출량 책임과 개발도상국의 불가피한 기후 피해 격차를 분석하고 기금 지원 인프라를 국제 법률 협약 관점에서 재정립하는 것을 목적으로 한다. 독서 활동으로 '환경 정의와 분배적 기민'(장 필립 저)을 깊게 분석했으며, 기후 금융 전문가 초청 세미나를 통해 자구책을 마주한 기후 난민의 현실과 손실 및 피해 기금(Loss and Damage Fund) 체계의 현황을 파악하여 인용 분석을 시도하였다.",
+    summary: "기후 변화가 미치는 경제적 영향과 기후 정의 불평등 현상을 선진국의 과거 탄소배출 책임 관점에서 분석하고, 이를 극복하기 위해 다국적 '손실 및 피해 기금(Loss and Damage Fund)' 개선 모델을 제시한 에세이입니다.",
+    parsedText: "기후 변화가 미치는 물리적 영향은 위도와 지리적 특성에 따라 상이하게 나타나며 특히 저소득 국가 and 적도 권역 개발도상국에 막심한 농업 및 경제적 타격을 준다. 본 연구에서는 선진 국가의 주도적인 과거 탄소 누적 배출량 책임과 개발도상국의 불가피한 기후 피해 격차를 분석하고 기금 지원 인프라를 국제 법률 협약 관점에서 재정립하는 것을 목적으로 한다. 독서 활동으로 '환경 정의와 분배적 기민'(장 필립 저)을 깊게 분석했으며, 기후 금융 전문가 초청 세미나를 통해 자구책을 마주한 기후 난민의 현실과 손실 및 피해 기금(Loss and Damage Fund) 체계의 현황을 파악하여 인용 분석을 시도하였다.",
     originalSeteuk: "기후 변화가 주는 글로벌 불평등 양상에 주목하여 기후 금융 관점의 독자적이고 명확한 학문적 논제를 설정함. 독서 활동 및 환경 정의에 대한 선행 자료를 폭넓게 섭렵하여 선진국과 개발도상국 사이의 무차별적 탄소 책임 관계를 분석 구조로 정교하게 해석함. 환경 정의 가치를 사회적 공조 개념으로 정립하고 다각적인 다국적 손실 피해 기금 체계 마련을 논리적으로 기획하여 참신한 해결책으로 보임. 자율 탐구 세미나에서 기후 난민 피해 완화를 위한 국제 금융 기구의 권한 범위 제고 및 거시적 법률 협약 시스템 모델을 주도적으로 발표하는 깊이를 보여줌. 복잡한 글로벌 수치 데이터를 치밀하게 계량화하여 주장의 신뢰도를 높이고, 자신이 정립한 학문적 해결책을 직접 자율 보고서 형태로 증명해 내는 성실성과 통찰이 매우 돋보임. 스스로 논증을 이어나가고 주도적으로 문제 상황의 이면을 규명하려는 탐구 역량이 뛰어남.",
     seteuk: "기후 변화가 주는 글로벌 불평등 양상에 주목하여 기후 금융 관점의 독자적이고 명확한 학문적 논제를 설정함. 독서 활동 및 환경 정의에 대한 선행 자료를 폭넓게 섭렵하여 선진국과 개발도상국 사이의 무차별적 탄소 책임 관계를 분석 구조로 정교하게 해석함. 환경 정의 가치를 사회적 공조 개념으로 정립하고 다각적인 다국적 손실 피해 기금 체계 마련을 논리적으로 기획하여 참신한 해결책으로 보임. 자율 탐구 세미나에서 기후 난민 피해 완화를 위한 국제 금융 기구의 권한 범위 제고 및 거시적 법률 협약 시스템 모델을 주도적으로 발표하는 깊이를 보여줌. 복잡한 글로벌 수치 데이터를 치밀하게 계량화하여 주장의 신뢰도를 높이고, 자신이 정립한 학문적 해결책을 직접 자율 보고서 형태로 증명해 내는 성실성과 통찰이 매우 돋보임. 스스로 논증을 이어나가고 주도적으로 문제 상황의 이면을 규명하려는 탐구 역량이 뛰어남.",
     rubrics: {
-      subjectSelection: { score: "우수", reason: "기후 불평등이란 거시적 개념을 손실 및 피해 기금이라는 정책적 자원과 엮어 매우 명확한 수준의 오리지널 논제를 설정하고 다수의 전문 문헌을 선행 학습함." },
+      subjectSelection: { score: "우수", reason: "기후 불평등이란 거시적 개념을 손실 및 피해 기금이라는 정책적 자원과 엮어 매우 명확한 수준 of 오리지널 논제를 설정하고 다수의 전문 문헌을 선행 학습함." },
       criticalAnalysis: { score: "우수", reason: "환경 정의 분배 관점을 적용하고 선진국 대 개도국의 배출 지표 구조 분석을 글로벌 다각적 시선에서 매우 설득력 있고 날카롭게 고찰해 냄." },
       argumentAndAlternative: { score: "보통", reason: "해결 방안으로 기금 체계를 다각화하는 정책적 요소를 제안했으나 실제 이행 시 선진국 협력을 유인할 동기 유발 모델에서 다소 기존 방식을 반복하는 한계가 있음." },
       ethicsAndFormat: { score: "우수", reason: "서론, 본론, 결론의 짜임새가 우수하면서도, '환경 정의와 분배적 기민' 저자 장 필립의 개념을 주석 처리와 출처 인용법을 준수하여 정직하게 녹여냄." }
@@ -52,11 +52,10 @@ const DEMO_STUDENTS: AnalyzedStudent[] = [
     id: "demo-2",
     fileName: "디지털_인프라가_아동학습_격차에_미치는_영향.pdf",
     studentName: "이서윤",
-    selectedTopic: "① 사회 불평등과 기회 격차",
-    customThesis: "디지털 인프라 학습 격차의 인지적 성과 조사와 공공 디지털 자환 평등 배분을 위한 교육 격차 완화 조례안 제안",
+    summary: "코로나19 이후 기기 격차 및 네트워크 불균형이 아동 청소년의 인지 격차와 교육 격차로 연쇄 심화되는 실상을 추적하고, 경기도 지방 예산 기반의 전담 에듀 멘토 배치 법안 및 격차 보상적 조례안을 구상한 기획 보고서입니다.",
     parsedText: "코로나 대유행기 이후 디지털 기반 에듀테크 도입은 교육의 유연성을 증가시켰으나 경제적 소득 5분위 수준에 따른 고성능 기기 보급 및 네트워크 환경 차이로 인해 인지적 아동 청소년 격차를 극대화시켰다. 본 조사는 기기와 학습 조력 시스템의 불균형적 결합 방식이 교육 불평등의 근본 요인임을 인지하는 데서 시작한다. 공공 기기와 전담 에듀 멘토 배치 법안을 경기도 지방 복지 예산과 결합하여 분석하며 격차 보상적 조례를 입안할 가치를 논증한다.",
     originalSeteuk: "디지털 기술 발전에 따른 학습 기회 불평등 문제의 실상을 깊이 이해하고 공적 공공 복지 조례안 마련이라는 주도적 탐구 목표를 정립함. 데이터 인프라의 차이가 경제적 격차와 학습적 격차로 연쇄적 악효과를 내는 인과관계를 설득력 있는 도표와 데이터를 교차하여 실증적으로 분석함. 기기 배분을 넘어선 밀착 교육 조력자 제도의 공적 안착을 위해 경기도 주민 발안 지원 조례 보완을 구체적인 정책 과제로 제시함. 세미나 토론 활동에서 지역 균형 발전을 위한 디지털 학습 바우처 지급 모형과 세수 연계 방안을 발제하여 소통과 주도적 해결 역량을 모범적으로 보임. 스스로 디지털 미디어 환경이 아동의 성장에 주는 정서적이고 정량적인 요인들을 체계적으로 구성하려 노력하는 태도가 우수하며 이를 한글 문단으로 완성해 내는 힘이 있음.",
-    seteuk: "디지털 기술 발전에 따른 학습 기회 불평등 문제의 실상을 깊이 이해하고 공적 공공 복지 조례안 마련이라는 주도적 탐구 목표를 정립함. 데이터 인프라의 차이가 경제적 격차와 학습적 격차로 연쇄적 악효과를 내는 인과관계를 설득력 있는 도표와 데이터를 교차하여 실증적으로 분석함. 기기 배분을 넘어선 밀착 교육 조력자 제도의 공적 안착을 위해 경기도 주민 발안 지원 조례 보완을 구체적인 정책 과제로 제시함. 세미나 토론 활동에서 지역 균형 발전을 위한 디지털 학습 바우처 지급 모형과 세수 연계 방안을 발제하여 소통과 주도적 해결 역량을 모범적으로 보임. 스스로 디지털 미디어 환경이 아동의 성장에 주는 정서적이고 정량적인 요인들을 체계적으로 구성하려 노력하는 태도가 우수하며 이를 한글 문단으로 완성해 내는 힘이 있음.",
+    seteuk: "디지털 기술 발전에 따른 학습 기회 불평등 문제의 실상을 깊이 이해하고 공적 공공 복지 조례안 마련이라는 주도적 탐구 목표ವನ್ನು 정립함. 데이터 인프라의 차이가 경제적 격차와 학습적 격차로 연쇄적 악효과를 내는 인과관계를 설득력 있는 도표와 데이터를 교차하여 실증적으로 분석함. 기기 배분을 넘어선 밀착 교육 조력자 제도의 공적 안착을 위해 경기도 주민 발안 지원 조례 보완을 구체적인 정책 과제로 제시함. 세미나 토론 활동에서 지역 균형 발전을 위한 디지털 학습 바우처 지급 모형과 세수 연계 방안을 발제하여 소통과 주도적 해결 역량을 모범적으로 보임. 스스로 디지털 미디어 환경이 아동의 성장에 주는 정서적이고 정량적인 요인들을 체계적으로 구성하려 노력하는 태도가 우수하며 이를 한글 문단으로 완성해 내는 힘이 있음.",
     rubrics: {
       subjectSelection: { score: "우수", reason: "소득 한계선과 인지 발달 격차라는 다학제적 개념을 융합하여 기재 요령에 부합하는 정량 지표와 지방 자치 조례 배분안이라는 독자적인 법적 가치를 표방함." },
       criticalAnalysis: { score: "보통", reason: "불평등 지수를 활용해 인과적 원인을 분석해가는 전개는 다각적이나, 거시적 노동 구조나 시장 불균형 요인 검토에서 한쪽 방면 가치 서술에 약간 쏠려있음." },
@@ -66,7 +65,7 @@ const DEMO_STUDENTS: AnalyzedStudent[] = [
     feedbacks: {
       compliment: "단순 디지털 자산 무료 지원이라는 원론적인 봉사 캠페인을 넘어 주민 자치 교육 조례안 보완 및 예산 배수 조례 결합 등 학생 신분에서 보기 드물게 거시적이고 행정적인 대안 모델을 시도한 기획력이 돋보임.",
       growth: "이 조례안이 한 지방단체의 실행을 넘어 디지털 교육 격차 해소를 위한 국가 전체의 '보편 교육 복지' 공공 서비스법이나 다국적 기술 대기업의 교육적 환원 기금(R&D 세액 공제) 유도로 지속하기 위해서 어떤 연대를 도입해야 할지 보완해보면 좋겠음.",
-      formatReview: "에듀테크 도입 통계 데이터를 단순 인용하여 복사하기 보단 소득 분위 격차와 실시간 학습 연계의 병목 현상을 연결했고 문학과 교육행정학 논문을 자신의 시각으로 명확히 직조함."
+      formatReview: "에뎌테크 도입 통계 데이터를 단순 인용하여 복사하기 보단 소득 분위 격차와 실시간 학습 연계의 병목 현상을 연결했고 문학과 교육행정학 논문을 자신의 시각으로 명확히 직조함."
     },
     byteCount: 0
   }
@@ -94,6 +93,13 @@ export default function App() {
   const [dragActive, setDragErrorActive] = useState(false);
   const [isEditorExpanded, setIsEditorExpanded] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // 교사가 제시하는 성취 기준 상태 관리
+  const [achievementStandards, setAchievementStandards] = useState<string[]>([
+    "교과 및 탐구 주제에 관한 다양한 현상을 비판적 관점에서 맥락적으로 분석하고, 사회적/제도적 관점의 실질적인 해결 대안을 구체화한다.",
+    "정직하고 엄격하게 탐구 윤리를 준수하여 자기 주도적 탐구 과정을 완성하며, 이를 명사형 종결 어미의 정교한 텍스트로 기술한다."
+  ]);
+  const [newStandard, setNewStandard] = useState("");
 
   // 초기 데모 데이터 보강
   useEffect(() => {
@@ -167,6 +173,7 @@ export default function App() {
 
     const formData = new FormData();
     formData.append("file", file);
+    formData.append("achievementStandards", JSON.stringify(achievementStandards));
 
     try {
       const response = await fetch("/api/analyze", {
@@ -197,12 +204,13 @@ export default function App() {
 
       const contentType = response.headers.get("content-type");
       if (!contentType || !contentType.includes("application/json")) {
+        let rawText = "";
         try {
-          const rawText = await response.text();
-          throw new Error(`올바르지 않은 응답 형식입니다 (JSON 필요). 받은 데이터: ${rawText.substring(0, 120)}`);
+          rawText = await response.text();
         } catch {
-          throw new Error("서버로부터 유효하지 않은 응답 형식을 받았습니다.");
+          throw new Error("서버로부터 유효하지 않은 응답 형식을 받았습니다. (응답 읽기 실패)");
         }
+        throw new Error(`올바르지 않은 응답 형식입니다 (JSON 필요). 받은 데이터: ${rawText.substring(0, 120)}`);
       }
 
       const freshStudent = await response.json();
@@ -213,14 +221,13 @@ export default function App() {
         id: fileId,
         fileName: file.name,
         studentName: freshStudent.studentName,
-        selectedTopic: freshStudent.selectedTopic,
-        customThesis: freshStudent.customThesis,
         parsedText: freshStudent.parsedText,
         originalSeteuk: freshStudent.originalSeteuk,
         seteuk: freshStudent.seteuk,
         rubrics: freshStudent.rubrics,
         feedbacks: freshStudent.feedbacks,
-        byteCount: computeBytes(freshStudent.seteuk)
+        byteCount: computeBytes(freshStudent.seteuk),
+        summary: freshStudent.summary || ""
       };
 
       setStudents(prev => [analyzedStud, ...prev]);
@@ -324,7 +331,7 @@ export default function App() {
               <span className="text-[10px] bg-teal-500/20 text-teal-300 px-2 py-0.5 rounded-full border border-teal-500/30 font-medium">고등학교 학생부 종합형</span>
               <span className="text-[10px] bg-teal-400 text-teal-950 px-2 py-0.5 rounded-full font-bold">2026 개정 적용</span>
             </div>
-            <h1 className="text-xl font-bold tracking-tight font-sans mt-1">바칼로레아 학생 활동 분석 및 피드백 시스템</h1>
+            <h1 className="text-xl font-bold tracking-tight font-sans mt-1">학생 활동 분석 및 피드백 시스템</h1>
           </div>
         </div>
         
@@ -342,6 +349,70 @@ export default function App() {
         
         {/* L단: 학생 파일 목록 및 업로드 보드 */}
         <section className="lg:col-span-3 flex flex-col gap-4">
+          
+          {/* 성취 기준 설정 카드 */}
+          <div className="bg-white rounded-2xl p-4 shadow-sm border border-slate-200">
+            <h2 className="text-sm font-bold text-slate-700 flex items-center gap-2 mb-2">
+              <Award className="w-4.5 h-4.5 text-teal-600 animate-pulse" />
+              <span>교과 성취 기준 설정 ({achievementStandards.length})</span>
+            </h2>
+            <p className="text-[11px] text-slate-400 mb-3 leading-relaxed">
+              PDF 분석 전 성취 기준을 추가해 보세요. 제미니 AI가 기재된 성취 기준에 직접 의거해 세특 및 평가를 완성합니다.
+            </p>
+            
+            <div className="space-y-2 mb-3 max-h-[160px] overflow-y-auto pr-1">
+              {achievementStandards.map((std, index) => (
+                <div key={index} className="group relative bg-slate-50 border border-slate-100 p-2 text-[11px] text-slate-600 leading-normal rounded-lg">
+                  <div className="flex items-start gap-1.5">
+                    <span className="text-teal-600 font-bold text-[9px] bg-teal-50 px-1 py-0.5 rounded border border-teal-100 shrink-0 mt-0.5">
+                      기준 {index + 1}
+                    </span>
+                    <span className="break-all pr-5">{std}</span>
+                  </div>
+                  <button 
+                    onClick={() => {
+                      setAchievementStandards(prev => prev.filter((_, i) => i !== index));
+                    }}
+                    className="absolute top-1.5 right-1.5 opacity-0 group-hover:opacity-100 text-slate-400 hover:text-rose-500 transition-opacity p-0.5 rounded-full hover:bg-slate-100 cursor-pointer"
+                    title="삭제"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              ))}
+              {achievementStandards.length === 0 && (
+                <p className="text-[11px] text-slate-400 text-center py-4 bg-slate-50/50 rounded-lg border border-dashed border-slate-200">등록된 성취 기준이 없습니다.<br />아래에서 새로운 기준을 등록해 보세요.</p>
+              )}
+            </div>
+
+            <div className="flex gap-1.5">
+              <input 
+                type="text"
+                placeholder="교과 및 탐구 성취 기준 입력..."
+                value={newStandard}
+                onChange={(e) => setNewStandard(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && newStandard.trim()) {
+                    setAchievementStandards(prev => [...prev, newStandard.trim()]);
+                    setNewStandard("");
+                  }
+                }}
+                className="flex-1 text-[11px] px-2.5 py-1.5 border border-slate-200 rounded-lg focus:outline-none focus:border-teal-500 bg-slate-50/50"
+              />
+              <button 
+                onClick={() => {
+                  if (newStandard.trim()) {
+                    setAchievementStandards(prev => [...prev, newStandard.trim()]);
+                    setNewStandard("");
+                  }
+                }}
+                className="px-2.5 py-1.5 bg-teal-600 hover:bg-teal-700 text-white text-xs font-semibold rounded-lg flex items-center justify-center transition-colors shrink-0 cursor-pointer"
+              >
+                추가
+              </button>
+            </div>
+          </div>
+
           <div className="bg-white rounded-2xl p-4 shadow-sm border border-slate-200">
             <h2 className="text-sm font-bold text-slate-700 flex items-center gap-2 mb-3">
               <Users className="w-4.5 h-4.5 text-teal-600" />
@@ -426,7 +497,7 @@ export default function App() {
                       <div className="flex justify-between items-start">
                         <div className="flex items-center gap-2">
                           <span className="font-bold text-slate-900 text-sm">{studentNameFormat(student.studentName)}</span>
-                          <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-600 font-medium">{student.selectedTopic.split(" ")[0]}</span>
+                          <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-600 font-medium">탐구 활동</span>
                         </div>
                         <button 
                           onClick={(e) => handleDeleteStudent(student.id, e)}
@@ -437,7 +508,7 @@ export default function App() {
                         </button>
                       </div>
 
-                      <p className="text-[11px] text-slate-500 line-clamp-1 italic font-serif">"{student.customThesis}"</p>
+                      <p className="text-[11px] text-slate-500 line-clamp-1 font-serif">{student.summary || "탐구 보고서 원본 분석 자료"}</p>
 
                       <div className="flex justify-between items-center mt-1 border-t border-slate-100/60 pt-1.5">
                         <div className="flex items-center gap-1 text-[10px] text-slate-400">
@@ -494,20 +565,9 @@ export default function App() {
                     <div className="flex flex-col gap-2">
                       <div className="flex items-center gap-2 text-xs text-teal-700 font-bold mb-1">
                         <Award className="w-4 h-4" />
-                        <span>바칼로레아 논제 탐구 개요</span>
+                        <span>학생 탐구 활동</span>
                       </div>
                       <h3 className="text-lg font-bold text-slate-900">{studentNameFormat(selectedStudent.studentName)} 학생 자료</h3>
-                      
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2 bg-slate-50 p-3.5 rounded-xl border border-slate-100">
-                        <div>
-                          <span className="block text-[10px] text-slate-400 uppercase font-semibold">대주제 사회 현안</span>
-                          <span className="text-xs font-bold text-slate-700">{selectedStudent.selectedTopic}</span>
-                        </div>
-                        <div>
-                          <span className="block text-[10px] text-slate-400 uppercase font-semibold">기획 에세이 개별 논제</span>
-                          <span className="text-xs font-bold text-slate-700 font-serif leading-relaxed italic">"{selectedStudent.customThesis}"</span>
-                        </div>
-                      </div>
 
                       {/* PDF에서 기계 파싱된 원문 텍스트 프리뷰 */}
                       <details className="mt-3 group border border-slate-200 rounded-lg overflow-hidden transition-all bg-white">
@@ -519,6 +579,19 @@ export default function App() {
                           {selectedStudent.parsedText}
                         </div>
                       </details>
+
+                      {/* 학생 자료 AI 핵심 요약 */}
+                      {selectedStudent.summary && (
+                        <div className="mt-3 p-3.5 bg-gradient-to-br from-teal-50/40 to-slate-50 border border-slate-200/60 rounded-xl">
+                          <span className="text-[10px] text-teal-700 font-bold uppercase tracking-wider mb-1.5 flex items-center gap-1">
+                            <Sparkles className="w-3.5 h-3.5" />
+                            <span>탐구 활동 핵심 요약</span>
+                          </span>
+                          <p className="text-xs text-slate-600 leading-relaxed font-sans">
+                            {selectedStudent.summary}
+                          </p>
+                        </div>
+                      )}
                     </div>
                   </div>
 
@@ -530,10 +603,10 @@ export default function App() {
                     </h3>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      {renderRubricCard("주제 설정 및 선행 탐구", selectedStudent.rubrics.subjectSelection)}
-                      {renderRubricCard("비판적 분석 및 맥락 이해", selectedStudent.rubrics.criticalAnalysis)}
-                      {renderRubricCard("논증 및 해결 대안", selectedStudent.rubrics.argumentAndAlternative)}
-                      {renderRubricCard("연구 윤리 및 에세이 형식", selectedStudent.rubrics.ethicsAndFormat)}
+                      {renderRubricCard("주제 설정 및 선행 탐구", selectedStudent.rubrics?.subjectSelection)}
+                      {renderRubricCard("비판적 분석 및 맥락 이해", selectedStudent.rubrics?.criticalAnalysis)}
+                      {renderRubricCard("논증 및 해결 대안", selectedStudent.rubrics?.argumentAndAlternative)}
+                      {renderRubricCard("연구 윤리 및 에세이 형식", selectedStudent.rubrics?.ethicsAndFormat)}
                     </div>
                   </div>
 
@@ -547,17 +620,17 @@ export default function App() {
                     <div className="space-y-3.5">
                       <div className="p-3.5 rounded-xl border border-emerald-100 bg-emerald-50/30">
                         <span className="inline-block text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-md font-bold mb-1.5">칭찬 포인트</span>
-                        <p className="text-xs text-emerald-950 font-medium leading-relaxed">{selectedStudent.feedbacks.compliment}</p>
+                        <p className="text-xs text-emerald-950 font-medium leading-relaxed">{selectedStudent.feedbacks?.compliment || "칭찬 피드백이 준비 중입니다."}</p>
                       </div>
 
                       <div className="p-3.5 rounded-xl border border-amber-100 bg-amber-50/20">
                         <span className="inline-block text-[10px] bg-amber-100 text-amber-800 px-2 py-0.5 rounded-md font-bold mb-1.5">성장 포인트 (시야 확장용 유도 질문)</span>
-                        <p className="text-xs text-amber-950 font-medium leading-relaxed italic">"{selectedStudent.feedbacks.growth}"</p>
+                        <p className="text-xs text-amber-950 font-medium leading-relaxed italic">"{selectedStudent.feedbacks?.growth || "성장 유도용 질문이 생성 중입니다."}"</p>
                       </div>
 
                       <div className="p-3.5 rounded-xl border border-sky-100 bg-sky-50/30">
                         <span className="inline-block text-[10px] bg-sky-100 text-sky-800 px-2 py-0.5 rounded-md font-bold mb-1.5">형식 검토 및 융합도 점검</span>
-                        <p className="text-xs text-sky-950 font-medium leading-relaxed">{selectedStudent.feedbacks.formatReview}</p>
+                        <p className="text-xs text-sky-950 font-medium leading-relaxed">{selectedStudent.feedbacks?.formatReview || "연구 형식 점검 의견이 준비 중입니다."}</p>
                       </div>
                     </div>
                   </div>
@@ -730,8 +803,6 @@ export default function App() {
                   onClick={() => {
                     const textFile = new Blob([
                       `학생명: ${studentNameFormat(selectedStudent.studentName)}\n`,
-                      `대주제: ${selectedStudent.selectedTopic}\n`,
-                      `논제명: ${selectedStudent.customThesis}\n`,
                       `최종 바이트: ${selectedStudent.byteCount} bytes\n`,
                       `-------------------------------------------\n`,
                       selectedStudent.seteuk
@@ -765,7 +836,7 @@ export default function App() {
       </div>
 
       <footer className="bg-white border-t border-slate-200 py-4 px-6 text-center text-[11px] text-slate-400 flex flex-col sm:flex-row justify-between items-center gap-2">
-        <p>© 2026 고등학교 학생생활기록부 보조 시스템 - 바칼로레아 주제 탐구 전용 분석 엔진 (Gemini 3.5 Flash 구동)</p>
+        <p>© 2026 고등학교 학생생활기록부 보조 시스템 - 학생 탐구 분석 엔진 (Gemini 3.5 Flash 구동)</p>
         <p className="font-medium text-slate-500">Developer: Gabriel Byeongje Jeon</p>
       </footer>
     </div>
@@ -773,31 +844,38 @@ export default function App() {
 }
 
 // 루브릭 카드 헬퍼 렌더러
-function renderRubricCard(title: string, rubric: Rubrics[keyof Rubrics]) {
-  const getBadgeColor = (score: "우수" | "보통" | "미흡") => {
+function renderRubricCard(title: string, rubric: any) {
+  const getBadgeColor = (score: string) => {
     switch (score) {
-      case "우수": return "bg-emerald-50 text-emerald-700 border-emerald-250";
-      case "보통": return "bg-amber-50 text-amber-700 border-amber-250";
-      case "미흡": return "bg-rose-50 text-rose-700 border-rose-250";
+      case "우수": return "bg-emerald-50 text-emerald-700 border-emerald-200";
+      case "보통": return "bg-amber-50 text-amber-700 border-amber-200";
+      case "미흡": return "bg-rose-50 text-rose-700 border-rose-200";
+      default: return "bg-slate-50 text-slate-500 border-slate-200";
     }
   };
+
+  const score = rubric?.score || "중립";
+  const reason = rubric?.reason || "원문 분석 중이거나 세부 루브릭이 지정되지 않았습니다.";
 
   return (
     <div className="bg-slate-50 p-3 rounded-xl border border-slate-100 flex flex-col gap-2 justify-between">
       <div className="flex justify-between items-start gap-2">
         <span className="text-[11px] text-slate-500 font-bold leading-normal">{title}</span>
-        <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded border shrink-0 ${getBadgeColor(rubric.score)}`}>
-          {rubric.score}
+        <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded border shrink-0 ${getBadgeColor(score)}`}>
+          {score}
         </span>
       </div>
-      <p className="text-[11px] text-slate-600 leading-normal font-sans tracking-tight">{rubric.reason}</p>
+      <p className="text-[11px] text-slate-600 leading-normal font-sans tracking-tight">{reason}</p>
     </div>
   );
 }
 
 // 학생 프라이버시 보호 비식별 포맷터 (예: 김동현 -> 김*현)
-function studentNameFormat(name: string) {
-  if (name.length <= 1) return name;
-  if (name.length === 2) return `${name[0]}*`;
-  return `${name[0]}*${name[name.length - 1]}`;
+function studentNameFormat(name: string | undefined | null) {
+  if (!name) return "";
+  const str = String(name).trim();
+  if (str.includes("*")) return str;
+  if (str.length <= 1) return str;
+  if (str.length === 2) return `${str[0]}*`;
+  return `${str[0]}*${str[str.length - 1]}`;
 }
